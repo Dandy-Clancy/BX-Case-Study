@@ -76,6 +76,7 @@
     --bx-bg: #ffffff;
     --bx-fg: #000000;
     --bx-rule: #000000;
+    --bx-rule-soft: rgba(0, 0, 0, 0.12); /* hairline separator for table rows, list rows, etc. */
     --bx-pad-x: 40px;
     --bx-max: 1648px; /* matches the Maximum responsive grid container token */
     --bx-gap-button: 16px;
@@ -97,6 +98,7 @@
     --bx-bg: #000000;
     --bx-fg: #ffffff;
     --bx-rule: #ffffff;
+    --bx-rule-soft: rgba(255, 255, 255, 0.18);
   }
 
   *, *::before, *::after { box-sizing: border-box; }
@@ -1024,11 +1026,47 @@
     object-fit: cover;
     display: block;
   }
-  /* Play overlay on video cards — centers a 64px outlined disc with play triangle. */
+  /* Play overlay on video cards — centers a 64px outlined disc with play triangle.
+     z-index 2 keeps it above the curtain reveal pseudo-element. */
   .bx-card__play-overlay {
     position: absolute; inset: 0;
     display: flex; align-items: center; justify-content: center;
     pointer-events: none;
+    z-index: 2;
+  }
+  /* Curtain reveal on every card image — same staged sequence as the M6 demo.
+     Container shows page bg → black curtain rises from below → pause → image
+     rises from below pushing the curtain up and out the top.
+     The ::before pseudo-element acts as the curtain; the inner img is the rising
+     panel. IntersectionObserver adds .is-revealed when the card scrolls in. */
+  .bx-card__image { background: var(--bx-bg); }
+  .bx-card__image::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: #000000;
+    z-index: 1;
+    pointer-events: none;
+    transform: translateY(100%);
+  }
+  .bx-card__image > img {
+    position: absolute;
+    inset: 0;
+    transform: translateY(100%);
+    z-index: 0;
+  }
+  .bx-card__image.is-revealed::before {
+    animation: bx-curtain-pass 1.6s cubic-bezier(0.32, 0.72, 0, 1) forwards;
+  }
+  .bx-card__image.is-revealed > img {
+    animation: bx-image-rise 0.75s cubic-bezier(0.32, 0.72, 0, 1) 0.85s forwards;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .bx-card__image::before { display: none; }
+    .bx-card__image > img {
+      transform: none !important;
+      animation: none !important;
+    }
   }
   .bx-card__play-overlay svg {
     width: 64px; height: 64px;
@@ -1053,6 +1091,104 @@
     font-family: var(--bx-f-sans);
     font-size: 14px; font-weight: 400; line-height: 21px;
     color: inherit; margin: 0;
+  }
+
+  /* ---------- Numbered Insight Card (01/02/03) ----------
+     Large Sanomat numerals lead each insight; sub-head + body below. */
+  .bx-insight-card { display: flex; flex-direction: column; gap: 24px; }
+  .bx-insight-card__num {
+    font-family: var(--bx-f-serif);
+    font-size: 96px; font-weight: 300; line-height: 1; letter-spacing: 0.008em;
+    color: inherit; margin: 0;
+  }
+  .bx-insight-card__title {
+    font-family: var(--bx-f-serif);
+    font-size: 28px; font-weight: 300; line-height: 1.3; letter-spacing: 0.008em;
+    color: inherit; margin: 0;
+  }
+  .bx-insight-card__body {
+    font-family: var(--bx-f-sans);
+    font-size: 16px; font-weight: 400; line-height: 24px; letter-spacing: 0.256px;
+    color: inherit; margin: 0;
+  }
+  @media (max-width: 768px) {
+    .bx-insight-card__num { font-size: 72px; }
+    .bx-insight-card__title { font-size: 24px; }
+  }
+
+  /* ---------- Category Card (image + serif label below) ----------
+     Used for taxonomy navigation: image tile, label underneath, no body. */
+  .bx-card--category { gap: 16px; }
+  .bx-card--category .bx-card__title {
+    font-size: 28px; font-weight: 300; letter-spacing: 0.008em;
+  }
+  .bx-card--category .bx-card__title.bx-text-link::after { bottom: -4px; }
+
+  /* ---------- Video Card (image + play overlay + text-link title + date) ----------
+     Modifier of base .bx-card. Title behaves as a text-link with hover underline.
+     Play overlay grows on hover (inherits the base .bx-card:hover rule). */
+  .bx-card--video .bx-card__title {
+    font-size: 18px; font-weight: 400; line-height: 27px;
+    font-family: var(--bx-f-sans); letter-spacing: 0.256px;
+  }
+  .bx-card--video .bx-card__date {
+    font-family: var(--bx-f-sans);
+    font-size: 14px; font-weight: 400; line-height: 21px;
+    color: inherit; margin: 0;
+  }
+
+  /* ---------- Vertical Image Card (portrait image + body + footer label) ----------
+     Used for editorial pillars: portrait image, Sanomat title, body, then a
+     footer label sitting at the bottom of the column with extra breathing room. */
+  .bx-card--vertical { gap: 32px; }
+  .bx-card--vertical .bx-card__image { aspect-ratio: 3/4; }
+  .bx-card--vertical .bx-card__title {
+    font-family: var(--bx-f-serif);
+    font-size: 28px; font-weight: 300; line-height: 1.3; letter-spacing: 0.008em;
+    margin: 0;
+  }
+  .bx-card--vertical .bx-card__body {
+    font-family: var(--bx-f-sans);
+    font-size: 16px; font-weight: 400; line-height: 24px; letter-spacing: 0.256px;
+    color: inherit; margin: 0;
+  }
+  .bx-card--vertical .bx-card__footer-label {
+    font-family: var(--bx-f-sans);
+    font-size: 16px; font-weight: 500; line-height: 24px; letter-spacing: 0.256px;
+    color: inherit; margin: 32px 0 0 0;
+  }
+  @media (max-width: 768px) {
+    .bx-card--vertical .bx-card__title { font-size: 24px; }
+  }
+
+  /* ---------- Asset Detail Card (image + title + spec rows with rules) ----------
+     Property-card pattern. Sanomat title sits below the image, then two-or-three
+     stacked spec rows with a small label + Sanomat value, divided by hairline rules. */
+  .bx-card--asset .bx-card__image { aspect-ratio: 16/9; }
+  .bx-card--asset .bx-card__title {
+    font-family: var(--bx-f-serif);
+    font-size: 26px; font-weight: 300; line-height: 1.3; letter-spacing: 0.008em;
+    margin: 0;
+  }
+  .bx-asset-spec { margin-top: 16px; display: flex; flex-direction: column; }
+  .bx-asset-spec__row {
+    padding: 16px 0;
+    border-bottom: 1px solid var(--bx-rule-soft);
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .bx-asset-spec__label {
+    font-family: var(--bx-f-sans);
+    font-size: 14px; font-weight: 400; line-height: 21px;
+    color: inherit; margin: 0;
+  }
+  .bx-asset-spec__value {
+    font-family: var(--bx-f-serif);
+    font-size: 26px; font-weight: 300; line-height: 1.3; letter-spacing: 0.008em;
+    color: inherit; margin: 0;
+  }
+  @media (max-width: 768px) {
+    .bx-card--asset .bx-card__title { font-size: 22px; }
+    .bx-asset-spec__value { font-size: 22px; }
   }
 
   /* ---------- Typography Audit ---------- */
@@ -1310,7 +1446,7 @@
 
   .bx-portfolio-table {
     width: 100%; border-collapse: collapse; margin-top: 16px;
-    border-top: 1px solid var(--bx-rule);
+    border-top: 1px solid var(--bx-rule-soft);
   }
   .bx-portfolio-table th, .bx-portfolio-table td {
     text-align: left; padding: 24px 24px 24px 0;
@@ -1323,7 +1459,7 @@
   .bx-portfolio-table td {
     font-size: 14px; font-weight: 400; line-height: 21px;
   }
-  .bx-portfolio-table tbody tr td { border-top: 1px solid var(--bx-rule); }
+  .bx-portfolio-table tbody tr td { border-top: 1px solid var(--bx-rule-soft); }
   .bx-portfolio-table th:last-child, .bx-portfolio-table td:last-child { padding-right: 0; }
   .bx-portfolio-table th sup { font-size: 10px; vertical-align: super; }
 
@@ -1338,18 +1474,16 @@
     font-family: var(--bx-f-sans);
     font-size: 16px; font-weight: 400; line-height: 24px;
   }
-  .bx-portfolio-foot__more svg { width: 32px; height: 32px; flex: 0 0 32px; }
-  .bx-portfolio-foot__more svg circle { fill: none; stroke: currentColor; stroke-width: 1.2; }
   .bx-portfolio-foot__more:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; }
+  /* Disc inside the button — span uses .bx-icon-disc styling for visual consistency
+     with the canonical Pagination / Content Controls disc pattern. */
+  .bx-portfolio-foot__more .bx-icon-disc { pointer-events: none; }
+  .bx-portfolio-foot__more:hover .bx-icon-disc { transform: scale(1.18); }
+  .bx-portfolio-foot__more:hover .bx-icon-disc circle { fill: currentColor; }
+  .bx-portfolio-foot__more:hover .bx-icon-disc path { stroke: var(--bx-bg); }
   .bx-portfolio-foot__divider {
-    width: 1px; height: 24px; background: currentColor;
+    width: 1px; height: 24px; background: var(--bx-rule-soft);
   }
-  .bx-portfolio-foot__pages { display: inline-flex; gap: 12px; align-items: center; }
-  .bx-portfolio-foot__page {
-    width: 8px; height: 8px; border-radius: 50%;
-    background: currentColor; opacity: 0.2;
-  }
-  .bx-portfolio-foot__page--active { opacity: 1; }
 
   /* ---------- Text Columns ---------- */
   .bx-text-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; margin-top: 24px; }
@@ -2456,9 +2590,12 @@
   }
 
   /* ---------- Image Block — Curtain Reveal (M6) ----------
-     Two-part scroll-triggered animation:
-       1. Black curtain wipes UP across the image (1s ease)
-       2. Image fades in starting at 0.4s (0.5s ease)
+     Three-act scroll-triggered animation:
+       1. Container shows the page background.
+       2. Black curtain rises from the bottom up to fully cover the container.
+       3. Brief pause, then the image rises from the bottom — pushing the black
+          curtain up and out the top of the container — until the image is
+          fully in place.
      Triggered by IntersectionObserver adding the .is-revealed class. */
   .bx-animation__image-wrapper {
     position: relative;
@@ -2466,48 +2603,58 @@
     overflow: hidden;
     width: 100%;
     aspect-ratio: 16 / 9;
-    background: #000000;
+    background: var(--bx-bg);
   }
   .bx-animation__image-wrapper picture {
-    position: relative;
+    position: absolute;
+    inset: 0;
     width: 100%; height: 100%;
     display: block;
     overflow: hidden;
+    transform: translateY(100%); /* image starts BELOW the container */
+    z-index: 0;
   }
   .bx-animation__curtain {
     position: absolute;
-    left: 0; bottom: 0;
-    width: 100%;
-    height: 0;
+    inset: 0;
+    width: 100%; height: 100%;
     background: #000000;
     z-index: 1;
     pointer-events: none;
+    transform: translateY(100%); /* curtain starts BELOW the container */
   }
   .bx-animation__curtain-image {
     width: 100%; height: 100%;
     object-fit: cover;
     display: block;
-    opacity: 0;
   }
-  /* When the wrapper enters the viewport, run the two animations */
+  /* When the wrapper enters the viewport, run the staged animations.
+     Total runtime = 1.6s.
+       0.00–0.65s : curtain rises from below, fills container.
+       0.65–0.85s : pause (curtain holds at full coverage).
+       0.85–1.60s : image rises from below + curtain rises off top (in sync). */
   .bx-animation__image-wrapper.is-revealed .bx-animation__curtain {
-    animation: bx-curtain-reveal 1s ease forwards;
+    animation: bx-curtain-pass 1.6s cubic-bezier(0.32, 0.72, 0, 1) forwards;
   }
-  .bx-animation__image-wrapper.is-revealed .bx-animation__curtain-image {
-    animation: bx-image-fade-in 0.5s ease 0.4s forwards;
+  .bx-animation__image-wrapper.is-revealed picture {
+    animation: bx-image-rise 0.75s cubic-bezier(0.32, 0.72, 0, 1) 0.85s forwards;
   }
-  @keyframes bx-curtain-reveal {
-    0%   { bottom: 0;    height: 0; }
-    50%  { bottom: 0;    height: 100%; }
-    100% { bottom: 100%; height: 0; }
+  @keyframes bx-curtain-pass {
+    0%    { transform: translateY(100%); }   /* below container, hidden */
+    40.6% { transform: translateY(0); }      /* fully covers container @ 0.65s */
+    53.1% { transform: translateY(0); }      /* hold @ 0.85s */
+    100%  { transform: translateY(-100%); }  /* rises off the top */
   }
-  @keyframes bx-image-fade-in {
-    0%   { opacity: 0; }
-    100% { opacity: 1; }
+  @keyframes bx-image-rise {
+    0%   { transform: translateY(100%); }   /* below container, hidden */
+    100% { transform: translateY(0); }       /* fully in place */
   }
   @media (prefers-reduced-motion: reduce) {
     .bx-animation__curtain { display: none; }
-    .bx-animation__curtain-image { opacity: 1 !important; animation: none !important; }
+    .bx-animation__image-wrapper picture {
+      transform: none !important;
+      animation: none !important;
+    }
   }
   /* Replay button — small inline-style ghost button to re-trigger the curtain demo */
   .bx-replay-btn {
@@ -5419,6 +5566,101 @@
         </div>
       </article>
 
+      <!-- ====== PHASED BAR (TWO-PHASE WITH SEGMENT BANNERS) ====== -->
+      <article class="bx-variant" aria-labelledby="dv-bar-phased">
+        <h4 class="bx-variant__heading" id="dv-bar-phased">Bar Chart &mdash; Phased</h4>
+        <p class="bx-p3" style="margin-top:8px; max-width:720px;">Vertical bar series split into two narrative phases by hue, with a baseline arrow callout showing the magnitude of growth across the full horizon. Bottom banner labels demarcate the two phases; the Sanomat figure on the diagonal carries the takeaway.</p>
+        <div class="bx-spec-strip" style="margin-top:24px;">
+          <div class="bx-spec-strip__cell"><span class="bx-spec-strip__key">USE WHEN</span><span class="bx-spec-strip__val">A trend has two distinct narrative phases (driver A &rarr; driver B)</span></div>
+          <div class="bx-spec-strip__cell"><span class="bx-spec-strip__key">AVOID WHEN</span><span class="bx-spec-strip__val">No phase shift &mdash; standard vertical bar tells the same story</span></div>
+          <div class="bx-spec-strip__cell"><span class="bx-spec-strip__key">PHASE TONE</span><span class="bx-spec-strip__val">Phase 1 sage (--bx-dv-c2), Phase 2 teal (--bx-dv-c1)</span></div>
+          <div class="bx-spec-strip__cell"><span class="bx-spec-strip__key">CALLOUT</span><span class="bx-spec-strip__val">Diagonal arrow + Sanomat multiplier figure</span></div>
+        </div>
+        <div class="bx-dv">
+          <svg class="bx-dv__chart" viewBox="0 0 720 360" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Phased bar chart, sample series across two narrative phases">
+            <defs>
+              <marker id="bx-dv-arrow-phased" viewBox="0 0 10 10" refX="9" refY="5"
+                markerWidth="9" markerHeight="9" orient="auto-start-reverse" markerUnits="userSpaceOnUse">
+                <path d="M0,0 L10,5 L0,10" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+              </marker>
+            </defs>
+            <!-- baseline -->
+            <line class="bx-dv-axis" x1="60" y1="280" x2="700" y2="280"/>
+            <!-- Phase 1 bars (sage). Heights ramp gradually. 7 bars at width 28, gap 8. -->
+            <rect class="bx-dv-bar bx-dv-bar--phase-1" x="80"  y="270" width="28" height="10"/>
+            <rect class="bx-dv-bar bx-dv-bar--phase-1" x="116" y="265" width="28" height="15"/>
+            <rect class="bx-dv-bar bx-dv-bar--phase-1" x="152" y="258" width="28" height="22"/>
+            <rect class="bx-dv-bar bx-dv-bar--phase-1" x="188" y="248" width="28" height="32"/>
+            <rect class="bx-dv-bar bx-dv-bar--phase-1" x="224" y="236" width="28" height="44"/>
+            <rect class="bx-dv-bar bx-dv-bar--phase-1" x="260" y="222" width="28" height="58"/>
+            <rect class="bx-dv-bar bx-dv-bar--phase-1" x="296" y="206" width="28" height="74"/>
+            <!-- Phase 2 bars (teal). Acceleration. 7 bars same dims. -->
+            <rect class="bx-dv-bar bx-dv-bar--phase-2" x="332" y="186" width="28" height="94"/>
+            <rect class="bx-dv-bar bx-dv-bar--phase-2" x="368" y="160" width="28" height="120"/>
+            <rect class="bx-dv-bar bx-dv-bar--phase-2" x="404" y="130" width="28" height="150"/>
+            <rect class="bx-dv-bar bx-dv-bar--phase-2" x="440" y="98"  width="28" height="182"/>
+            <rect class="bx-dv-bar bx-dv-bar--phase-2" x="476" y="68"  width="28" height="212"/>
+            <rect class="bx-dv-bar bx-dv-bar--phase-2" x="512" y="42"  width="28" height="238"/>
+            <rect class="bx-dv-bar bx-dv-bar--phase-2" x="548" y="20"  width="28" height="260"/>
+            <!-- end-point value labels -->
+            <text x="94"  y="262" text-anchor="middle" class="bx-dv-value" style="font-size:12px;">2</text>
+            <text x="562" y="14"  text-anchor="middle" class="bx-dv-value" style="font-size:12px;">394</text>
+            <!-- diagonal arrow from base of first bar to top of last bar -->
+            <line class="bx-dv-annot-line" x1="94" y1="278" x2="558" y2="22"
+                  marker-end="url(#bx-dv-arrow-phased)"/>
+            <!-- multiplier callout, mid-chart -->
+            <text class="bx-dv-annot-text" x="280" y="138" text-anchor="middle">197x</text>
+            <text class="bx-dv-annot-cap"  x="280" y="156" text-anchor="middle">increase</text>
+            <!-- x labels (sparse, alternating years) -->
+            <text x="94"  y="300" text-anchor="middle">Y0</text>
+            <text x="166" y="300" text-anchor="middle">Y2</text>
+            <text x="238" y="300" text-anchor="middle">Y4</text>
+            <text x="310" y="300" text-anchor="middle">Y6</text>
+            <text x="382" y="300" text-anchor="middle">Y8</text>
+            <text x="454" y="300" text-anchor="middle">Y10</text>
+            <text x="526" y="300" text-anchor="middle">Y12</text>
+            <!-- Phase banner labels (bottom). Two arrow-tipped strips share the baseline-strip row. -->
+            <g transform="translate(0 326)">
+              <!-- Phase 1 banner: from x=80 to x=320, sage fill -->
+              <path d="M80 0 L308 0 L320 12 L308 24 L80 24 Z" fill="var(--bx-dv-c2)"/>
+              <text x="194" y="16" text-anchor="middle" fill="#fff" style="font-family:var(--bx-f-sans); font-size:11px; letter-spacing:0.88px;">PHASE 1 ADOPTION</text>
+              <!-- Phase 2 banner: from x=332 to x=580, teal fill -->
+              <path d="M332 0 L568 0 L580 12 L568 24 L332 24 Z" fill="var(--bx-dv-c1)"/>
+              <text x="456" y="16" text-anchor="middle" fill="#fff" style="font-family:var(--bx-f-sans); font-size:11px; letter-spacing:0.88px;">PHASE 2 ACCELERATION</text>
+            </g>
+          </svg>
+        </div>
+      </article>
+
+      <!-- ====== HIGHLIGHTED BAR (ACCENT-DRIVEN COMPARISON) ====== -->
+      <article class="bx-variant" aria-labelledby="dv-bar-highlight">
+        <h4 class="bx-variant__heading" id="dv-bar-highlight">Bar Chart &mdash; Highlighted</h4>
+        <p class="bx-p3" style="margin-top:8px; max-width:720px;">Three-bar comparison where one bar carries an accent fill to draw the eye. Used when the takeaway is the gap between an outlier and the comparators, not the full distribution.</p>
+        <div class="bx-spec-strip" style="margin-top:24px;">
+          <div class="bx-spec-strip__cell"><span class="bx-spec-strip__key">USE WHEN</span><span class="bx-spec-strip__val">One value is the story; the others are context</span></div>
+          <div class="bx-spec-strip__cell"><span class="bx-spec-strip__key">AVOID WHEN</span><span class="bx-spec-strip__val">All values matter equally &mdash; use the standard vertical bar</span></div>
+          <div class="bx-spec-strip__cell"><span class="bx-spec-strip__key">COMPARATORS</span><span class="bx-spec-strip__val">Light-gray fill (var(--bx-dv-mute))</span></div>
+          <div class="bx-spec-strip__cell"><span class="bx-spec-strip__key">ACCENT</span><span class="bx-spec-strip__val">Navy fill (var(--bx-dv-c3))</span></div>
+        </div>
+        <div class="bx-dv">
+          <svg class="bx-dv__chart" viewBox="0 0 720 320" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Highlighted bar chart, three-category comparison with one accent bar">
+            <line class="bx-dv-axis" x1="120" y1="260" x2="700" y2="260"/>
+            <!-- Bar 1 (mute, 12) -->
+            <rect class="bx-dv-bar bx-dv-bar--mute" x="170" y="80"  width="100" height="180"/>
+            <text x="220" y="64"  text-anchor="middle" class="bx-dv-value" style="font-size:18px;">12%</text>
+            <text x="220" y="284" text-anchor="middle">CATEGORY ONE</text>
+            <!-- Bar 2 (mute, 10) -->
+            <rect class="bx-dv-bar bx-dv-bar--mute" x="350" y="100" width="100" height="160"/>
+            <text x="400" y="84"  text-anchor="middle" class="bx-dv-value" style="font-size:18px;">10%</text>
+            <text x="400" y="284" text-anchor="middle">CATEGORY TWO</text>
+            <!-- Bar 3 (accent, the story) -->
+            <rect class="bx-dv-bar bx-dv-bar--c3"   x="530" y="220" width="100" height="40"/>
+            <text x="580" y="204" text-anchor="middle" class="bx-dv-value" style="font-size:18px;">&lt;3%</text>
+            <text x="580" y="284" text-anchor="middle">CATEGORY THREE</text>
+          </svg>
+        </div>
+      </article>
+
       <!-- ====== LINE CHART ====== -->
       <article class="bx-variant" aria-labelledby="dv-line">
         <h4 class="bx-variant__heading" id="dv-line">Line Chart</h4>
@@ -5543,6 +5785,42 @@
               <p class="bx-dv-donut-readout__value">$1.2B Total Allocation</p>
             </div>
           </div>
+        </div>
+      </article>
+
+      <!-- ====== DONUT — SINGLE VALUE (HERO STAT IN CENTER) ====== -->
+      <article class="bx-variant" aria-labelledby="dv-donut-single">
+        <h4 class="bx-variant__heading" id="dv-donut-single">Donut Chart &mdash; Single Value</h4>
+        <p class="bx-p3" style="margin-top:8px; max-width:720px;">Two-segment ring with the hero figure in the center and a top legend keying the segments. Use when one large number is the takeaway and the share split provides supporting context.</p>
+        <div class="bx-spec-strip" style="margin-top:24px;">
+          <div class="bx-spec-strip__cell"><span class="bx-spec-strip__key">USE WHEN</span><span class="bx-spec-strip__val">A single hero value plus a 2-segment composition</span></div>
+          <div class="bx-spec-strip__cell"><span class="bx-spec-strip__key">AVOID WHEN</span><span class="bx-spec-strip__val">More than 2 segments &mdash; use the annotated donut</span></div>
+          <div class="bx-spec-strip__cell"><span class="bx-spec-strip__key">CENTER VALUE</span><span class="bx-spec-strip__val">Sanomat 64/64, currentColor</span></div>
+          <div class="bx-spec-strip__cell"><span class="bx-spec-strip__key">RING WIDTH</span><span class="bx-spec-strip__val">~14% of outer radius</span></div>
+        </div>
+        <div class="bx-dv" style="display:flex; flex-direction:column; align-items:center; gap:24px;">
+          <ul class="bx-dv-donut-legend" role="list" style="display:flex; gap:32px; padding:0; margin:0; list-style:none;">
+            <li class="bx-dv-donut-legend__row" style="display:inline-flex; align-items:center; gap:12px;">
+              <span class="bx-dv-donut-legend__swatch" style="display:inline-block; width:12px; height:12px; background:var(--bx-dv-c2);"></span>
+              <span class="bx-dv-donut-legend__name">Segment A</span>
+              <span class="bx-dv-donut-legend__value">93%</span>
+            </li>
+            <li class="bx-dv-donut-legend__row" style="display:inline-flex; align-items:center; gap:12px;">
+              <span class="bx-dv-donut-legend__swatch" style="display:inline-block; width:12px; height:12px; background:var(--bx-dv-c1);"></span>
+              <span class="bx-dv-donut-legend__name">Segment B</span>
+              <span class="bx-dv-donut-legend__value">7%</span>
+            </li>
+          </ul>
+          <svg viewBox="0 0 320 320" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Single-value donut: Segment A 93 percent, Segment B 7 percent, hero value 22 trillion dollars" style="max-width:320px; width:100%; height:auto;">
+            <g transform="translate(160 160)">
+              <!-- Segment A (sage) 93% : 0 → 334.8deg. outer r=130, inner r=110 (~15% width) -->
+              <path fill="var(--bx-dv-c2)" d="M0 -130 A130 130 0 1 1 -54.81 117.84 L-46.38 99.71 A110 110 0 1 0 0 -110 Z"/>
+              <!-- Segment B (teal) 7% : 334.8 → 360deg -->
+              <path fill="var(--bx-dv-c1)" d="M-54.81 117.84 A130 130 0 0 1 0 -130 L0 -110 A110 110 0 0 0 -46.38 99.71 Z"/>
+              <text x="0" y="0" text-anchor="middle" dominant-baseline="middle" style="font-family:var(--bx-f-serif); font-size:64px; font-weight:300; letter-spacing:0.512px;" fill="currentColor">$22T</text>
+              <text x="0" y="34" text-anchor="middle" dominant-baseline="middle" style="font-family:var(--bx-f-sans); font-size:11px; font-weight:400; letter-spacing:0.4px;" fill="currentColor">Hero stat caption</text>
+            </g>
+          </svg>
         </div>
       </article>
 
@@ -6637,13 +6915,196 @@
               </div>
             </article>
 
+            <article class="bx-variant" style="margin-top:64px;">
+              <h4 class="bx-variant__heading">Numbered Insight Card</h4>
+              <p class="bx-eyebrow bx-eyebrow--rule" style="margin-top:24px;"><span>SECTION EYEBROW</span></p>
+              <h3 class="bx-section-h2" style="margin-top:24px;">What You Need to Know.</h3>
+              <div class="bx-variants-grid" style="grid-template-columns:repeat(3,1fr); gap:48px; margin-top:48px;">
+                <div class="bx-insight-card">
+                  <p class="bx-insight-card__num">01</p>
+                  <h4 class="bx-insight-card__title">First Key Insight</h4>
+                  <p class="bx-insight-card__body">Short supporting paragraph that frames the first point. One to three sentences, sans body, no inline emphasis.</p>
+                </div>
+                <div class="bx-insight-card">
+                  <p class="bx-insight-card__num">02</p>
+                  <h4 class="bx-insight-card__title">Second Key Insight</h4>
+                  <p class="bx-insight-card__body">Short supporting paragraph that frames the second point. Length parallel to the first card so the row reads as a set.</p>
+                </div>
+                <div class="bx-insight-card">
+                  <p class="bx-insight-card__num">03</p>
+                  <h4 class="bx-insight-card__title">Third Key Insight</h4>
+                  <p class="bx-insight-card__body">Short supporting paragraph that frames the third point. Hierarchy comes from size, not weight or color.</p>
+                </div>
+              </div>
+            </article>
+
+            <article class="bx-variant" style="margin-top:64px;">
+              <h4 class="bx-variant__heading">Category Card</h4>
+              <div class="bx-variants-grid" style="grid-template-columns:repeat(3,1fr); gap:32px;">
+                <a class="bx-card bx-card--category" href="#" onclick="return false;">
+                  <div class="bx-card__image" aria-hidden="true">
+                    <img src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=1200&q=80&auto=format&fit=crop" alt="" loading="lazy" />
+                  </div>
+                  <h4 class="bx-card__title bx-text-link">Category One</h4>
+                </a>
+                <a class="bx-card bx-card--category" href="#" onclick="return false;">
+                  <div class="bx-card__image" aria-hidden="true">
+                    <img src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=1200&q=80&auto=format&fit=crop" alt="" loading="lazy" />
+                  </div>
+                  <h4 class="bx-card__title bx-text-link">Category Two</h4>
+                </a>
+                <a class="bx-card bx-card--category" href="#" onclick="return false;">
+                  <div class="bx-card__image" aria-hidden="true">
+                    <img src="https://images.unsplash.com/photo-1573164713988-8665fc963095?w=1200&q=80&auto=format&fit=crop" alt="" loading="lazy" />
+                  </div>
+                  <h4 class="bx-card__title bx-text-link">Category Three</h4>
+                </a>
+              </div>
+            </article>
+
+            <article class="bx-variant" style="margin-top:64px;">
+              <h4 class="bx-variant__heading">Video Card with Date</h4>
+              <h3 class="bx-section-h2" style="margin-top:24px;">Section Title.</h3>
+              <div class="bx-variants-grid" style="grid-template-columns:repeat(4,1fr); gap:24px; margin-top:48px;">
+                <a class="bx-card bx-card--video" href="#" onclick="return false;">
+                  <div class="bx-card__image" aria-hidden="true">
+                    <img src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=1200&q=80&auto=format&fit=crop" alt="" loading="lazy" />
+                    <span class="bx-card__play-overlay" aria-hidden="true">
+                      <svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="31" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M26 22v20l16-10z" fill="currentColor"/></svg>
+                    </span>
+                  </div>
+                  <h4 class="bx-card__title bx-text-link">First Video Title Goes Here</h4>
+                  <p class="bx-card__date">April 29, 2026</p>
+                </a>
+                <a class="bx-card bx-card--video" href="#" onclick="return false;">
+                  <div class="bx-card__image" aria-hidden="true">
+                    <img src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=1200&q=80&auto=format&fit=crop" alt="" loading="lazy" />
+                    <span class="bx-card__play-overlay" aria-hidden="true">
+                      <svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="31" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M26 22v20l16-10z" fill="currentColor"/></svg>
+                    </span>
+                  </div>
+                  <h4 class="bx-card__title bx-text-link">Second Video Title Goes Here</h4>
+                  <p class="bx-card__date">April 16, 2026</p>
+                </a>
+                <a class="bx-card bx-card--video" href="#" onclick="return false;">
+                  <div class="bx-card__image" aria-hidden="true">
+                    <img src="https://images.unsplash.com/photo-1573164713988-8665fc963095?w=1200&q=80&auto=format&fit=crop" alt="" loading="lazy" />
+                    <span class="bx-card__play-overlay" aria-hidden="true">
+                      <svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="31" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M26 22v20l16-10z" fill="currentColor"/></svg>
+                    </span>
+                  </div>
+                  <h4 class="bx-card__title bx-text-link">Third Video Title Goes Here</h4>
+                  <p class="bx-card__date">April 8, 2026</p>
+                </a>
+                <a class="bx-card bx-card--video" href="#" onclick="return false;">
+                  <div class="bx-card__image" aria-hidden="true">
+                    <img src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=1200&q=80&auto=format&fit=crop" alt="" loading="lazy" />
+                    <span class="bx-card__play-overlay" aria-hidden="true">
+                      <svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="31" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M26 22v20l16-10z" fill="currentColor"/></svg>
+                    </span>
+                  </div>
+                  <h4 class="bx-card__title bx-text-link">Fourth Video Title Goes Here</h4>
+                  <p class="bx-card__date">March 31, 2026</p>
+                </a>
+              </div>
+            </article>
+
+            <article class="bx-variant" style="margin-top:64px;">
+              <h4 class="bx-variant__heading">Vertical Image Card</h4>
+              <div class="bx-variants-grid" style="grid-template-columns:repeat(3,1fr); gap:32px;">
+                <a class="bx-card bx-card--vertical" href="#" onclick="return false;">
+                  <div class="bx-card__image" aria-hidden="true">
+                    <img src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=1200&q=80&auto=format&fit=crop" alt="" loading="lazy" />
+                  </div>
+                  <h4 class="bx-card__title bx-text-link">First editorial pillar headline</h4>
+                  <p class="bx-card__body">Short framing paragraph that introduces the pillar. Two to three sentences, sans body, no inline emphasis. Length parallels its siblings so the row reads as a set.</p>
+                  <p class="bx-card__footer-label">Pillar Label One</p>
+                </a>
+                <a class="bx-card bx-card--vertical" href="#" onclick="return false;">
+                  <div class="bx-card__image" aria-hidden="true">
+                    <img src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=1200&q=80&auto=format&fit=crop" alt="" loading="lazy" />
+                  </div>
+                  <h4 class="bx-card__title bx-text-link">Second editorial pillar headline</h4>
+                  <p class="bx-card__body">Short framing paragraph that introduces the pillar. Hierarchy comes from size, not weight or color, so all three columns read at the same density.</p>
+                  <p class="bx-card__footer-label">Pillar Label Two</p>
+                </a>
+                <a class="bx-card bx-card--vertical" href="#" onclick="return false;">
+                  <div class="bx-card__image" aria-hidden="true">
+                    <img src="https://images.unsplash.com/photo-1573164713988-8665fc963095?w=1200&q=80&auto=format&fit=crop" alt="" loading="lazy" />
+                  </div>
+                  <h4 class="bx-card__title bx-text-link">Third editorial pillar headline</h4>
+                  <p class="bx-card__body">Short framing paragraph that introduces the pillar. The footer label below acts as the categorical anchor each card belongs to.</p>
+                  <p class="bx-card__footer-label">Pillar Label Three</p>
+                </a>
+              </div>
+            </article>
+
+            <article class="bx-variant" style="margin-top:64px;">
+              <h4 class="bx-variant__heading">Asset Detail Card</h4>
+              <div class="bx-variants-grid" style="grid-template-columns:repeat(3,1fr); gap:32px;">
+                <a class="bx-card bx-card--asset" href="#" onclick="return false;">
+                  <div class="bx-card__image" aria-hidden="true">
+                    <img src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=1200&q=80&auto=format&fit=crop" alt="" loading="lazy" />
+                  </div>
+                  <h4 class="bx-card__title bx-text-link">Asset Portfolio One</h4>
+                  <div class="bx-asset-spec">
+                    <div class="bx-asset-spec__row">
+                      <p class="bx-asset-spec__label">Sq. Ft (thousands)</p>
+                      <p class="bx-asset-spec__value">50,171</p>
+                    </div>
+                    <div class="bx-asset-spec__row">
+                      <p class="bx-asset-spec__label">Acquisition Date</p>
+                      <p class="bx-asset-spec__value">Sept. 2019</p>
+                    </div>
+                  </div>
+                </a>
+                <a class="bx-card bx-card--asset" href="#" onclick="return false;">
+                  <div class="bx-card__image" aria-hidden="true">
+                    <img src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=1200&q=80&auto=format&fit=crop" alt="" loading="lazy" />
+                  </div>
+                  <h4 class="bx-card__title bx-text-link">Asset Portfolio Two</h4>
+                  <div class="bx-asset-spec">
+                    <div class="bx-asset-spec__row">
+                      <p class="bx-asset-spec__label">Sq. Ft (thousands)</p>
+                      <p class="bx-asset-spec__value">29,093</p>
+                    </div>
+                    <div class="bx-asset-spec__row">
+                      <p class="bx-asset-spec__label">Acquisition Date</p>
+                      <p class="bx-asset-spec__value">Oct. 2021</p>
+                    </div>
+                  </div>
+                </a>
+                <a class="bx-card bx-card--asset" href="#" onclick="return false;">
+                  <div class="bx-card__image" aria-hidden="true">
+                    <img src="https://images.unsplash.com/photo-1573164713988-8665fc963095?w=1200&q=80&auto=format&fit=crop" alt="" loading="lazy" />
+                  </div>
+                  <h4 class="bx-card__title bx-text-link">Asset Portfolio Three</h4>
+                  <div class="bx-asset-spec">
+                    <div class="bx-asset-spec__row">
+                      <p class="bx-asset-spec__label">Sq. Ft (thousands)</p>
+                      <p class="bx-asset-spec__value">143,175</p>
+                    </div>
+                    <div class="bx-asset-spec__row">
+                      <p class="bx-asset-spec__label">Acquisition Date</p>
+                      <p class="bx-asset-spec__value">Various</p>
+                    </div>
+                  </div>
+                </a>
+              </div>
+            </article>
+
             <div class="bx-doc-accordion-group" style="margin-top:96px;">
               <details class="bx-doc-accordion">
-                <summary>Variant Catalog (2 Classes)<span class="bx-doc-accordion__icon" aria-hidden="true"><svg viewBox="0 0 40 40"><circle class="bx-doc-icon__bg" cx="20" cy="20" r="19.25"/><path class="bx-doc-icon__chevron" d="M14 18l6 6 6-6"/></svg></span></summary>
+                <summary>Variant Catalog (7 Classes)<span class="bx-doc-accordion__icon" aria-hidden="true"><svg viewBox="0 0 40 40"><circle class="bx-doc-icon__bg" cx="20" cy="20" r="19.25"/><path class="bx-doc-icon__chevron" d="M14 18l6 6 6-6"/></svg></span></summary>
                 <div class="bx-doc-accordion__content">
                   <ul class="bx-catalog">
                     <li class="bx-catalog__row"><span class="bx-catalog__id">C1</span><span class="bx-catalog__name">Feature Card</span><span class="bx-catalog__desc">Image + Sanomat sub-head with [n] superscript + body with inline B4 + caption + Sanomat XL stat + 1px rule + B1 primary CTA. 3-up grid.</span><span class="bx-catalog__status" data-status="ready">DOCUMENTED</span></li>
-                    <li class="bx-catalog__row"><span class="bx-catalog__id">C2</span><span class="bx-catalog__name">Article Card</span><span class="bx-catalog__desc">Image + Sanomat title + date in body small. Whole card is the click target, no CTA disc.</span><span class="bx-catalog__status" data-status="ready">DOCUMENTED</span></li>
+                    <li class="bx-catalog__row"><span class="bx-catalog__id">C2</span><span class="bx-catalog__name">Article Card</span><span class="bx-catalog__desc">Image + Sanomat title + body + Watch Now CTA. Whole card is click target.</span><span class="bx-catalog__status" data-status="ready">DOCUMENTED</span></li>
+                    <li class="bx-catalog__row"><span class="bx-catalog__id">C3</span><span class="bx-catalog__name">Numbered Insight Card</span><span class="bx-catalog__desc">Sanomat 96 numeral + 28 sub-head + 16 body. 3-up grid for sequential takeaways.</span><span class="bx-catalog__status" data-status="ready">DOCUMENTED</span></li>
+                    <li class="bx-catalog__row"><span class="bx-catalog__id">C4</span><span class="bx-catalog__name">Category Card</span><span class="bx-catalog__desc">Image + Sanomat 28 label as text-link. Used for taxonomy navigation.</span><span class="bx-catalog__status" data-status="ready">DOCUMENTED</span></li>
+                    <li class="bx-catalog__row"><span class="bx-catalog__id">C5</span><span class="bx-catalog__name">Video Card with Date</span><span class="bx-catalog__desc">Image + 64px play overlay (grows 1.1× on hover) + sans 18 text-link title + sans 14 date. 4-up grid.</span><span class="bx-catalog__status" data-status="ready">DOCUMENTED</span></li>
+                    <li class="bx-catalog__row"><span class="bx-catalog__id">C6</span><span class="bx-catalog__name">Vertical Image Card</span><span class="bx-catalog__desc">Portrait 3:4 image + Sanomat 28 text-link title + 16 body + sans 16 medium footer label.</span><span class="bx-catalog__status" data-status="ready">DOCUMENTED</span></li>
+                    <li class="bx-catalog__row"><span class="bx-catalog__id">C7</span><span class="bx-catalog__name">Asset Detail Card</span><span class="bx-catalog__desc">16:9 image + Sanomat 26 text-link title + 2-row spec list with hairline rule between rows.</span><span class="bx-catalog__status" data-status="ready">DOCUMENTED</span></li>
                   </ul>
                 </div>
               </details>
@@ -6812,12 +7273,12 @@
 
             <article class="bx-variant" style="margin-top:64px;">
               <h4 class="bx-variant__heading">Image Block &mdash; Curtain Reveal</h4>
-              <p class="bx-p3" style="margin-top:8px; max-width:720px;">Scroll-triggered two-part animation. A solid black panel wipes upward across the frame (1s ease) while the underlying image fades in behind it (0.5s ease, 0.4s delay). One-shot via IntersectionObserver; honors <code>prefers-reduced-motion</code>.</p>
+              <p class="bx-p3" style="margin-top:8px; max-width:720px;">Scroll-triggered three-act animation. The frame opens on the page background, then a solid black panel rises from the bottom up to fully cover the container (0.65s). After a brief pause, the image rises from the bottom, pushing the black panel up and out the top of the container (0.75s). One-shot via IntersectionObserver; honors <code>prefers-reduced-motion</code>.</p>
               <div class="bx-animation__image-wrapper" data-bx-curtain style="margin-top:24px;">
                 <picture>
-                  <div class="bx-animation__curtain"></div>
                   <img class="bx-animation__curtain-image" src="https://images.squarespace-cdn.com/content/5b45806ff2e6b19ddd78f061/8576a98e-92a7-4139-b080-039846e19a07/ChatGPT+Image+May+5%2C+2026%2C+03_18_10+PM+%281%29.png?content-type=image%2Fpng" alt="" loading="lazy" />
                 </picture>
+                <div class="bx-animation__curtain"></div>
               </div>
               <div style="margin-top:16px;">
                 <button class="bx-replay-btn" type="button" data-bx-curtain-replay aria-label="Replay curtain reveal animation">
@@ -6902,7 +7363,6 @@
 
             <article class="bx-variant">
               <h4 class="bx-variant__heading">Portfolio Holdings Table</h4>
-              <p class="bx-p3" style="margin-top:8px; max-width:720px;">Audited from breit.com / bcred.com holdings pages. Header strip pairs the table title with a PDF download icon; body rows divide on a hairline rule; footer holds the Load More disc and page-dot indicator (active dot at full opacity, inactive at 0.2).</p>
               <div class="bx-spec-strip" style="margin-top:24px;">
                 <div class="bx-spec-strip__cell"><span class="bx-spec-strip__key">USE WHEN</span><span class="bx-spec-strip__val">Long disclosure list paginated to keep first paint compact</span></div>
                 <div class="bx-spec-strip__cell"><span class="bx-spec-strip__key">HEADER</span><span class="bx-spec-strip__val">Sans 16/24 title + 24×28 PDF anchor</span></div>
@@ -6910,7 +7370,7 @@
                 <div class="bx-spec-strip__cell"><span class="bx-spec-strip__key">FOOTER</span><span class="bx-spec-strip__val">Load More disc + 1px divider + 8px page dots</span></div>
               </div>
               <div class="bx-portfolio-head">
-                <p class="bx-portfolio-head__title">Download Full List</p>
+                <a href="#" class="bx-text-link bx-portfolio-head__title" onclick="return false;">Download Full List</a>
                 <a href="#" class="bx-portfolio-head__pdf" aria-label="Download as PDF" onclick="return false;">
                   <svg viewBox="0 0 24 28" aria-hidden="true" focusable="false">
                     <path d="M4 1h12l4 4v22H4z" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/>
@@ -6941,24 +7401,24 @@
               <div class="bx-portfolio-foot">
                 <button class="bx-portfolio-foot__more" type="button">
                   <span>Load More</span>
-                  <svg viewBox="0 0 40 40" aria-hidden="true" focusable="false">
-                    <circle cx="20" cy="20" r="19.25"/>
-                    <path d="M20 12v15m-6-6 6 6 6-6" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
-                  </svg>
+                  <span class="bx-icon-disc" aria-hidden="true">
+                    <svg viewBox="0 0 40 40">
+                      <circle cx="20" cy="20" r="19.25" fill="none" stroke="currentColor" stroke-width="1.5"/>
+                      <path d="M20 12v16m-6-6 6 6 6-6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </span>
                 </button>
                 <span class="bx-portfolio-foot__divider" aria-hidden="true"></span>
-                <span class="bx-portfolio-foot__pages" aria-hidden="true">
-                  <span class="bx-portfolio-foot__page bx-portfolio-foot__page--active"></span>
-                  <span class="bx-portfolio-foot__page"></span>
-                  <span class="bx-portfolio-foot__page"></span>
-                </span>
+                <div class="bx-dots" role="presentation">
+                  <button class="bx-dot" type="button" aria-current="true" aria-label="Page 1"><span class="bx-dot__ring" aria-hidden="true"></span><span class="bx-dot__core" aria-hidden="true"></span></button>
+                  <button class="bx-dot" type="button" aria-label="Page 2"><span class="bx-dot__ring" aria-hidden="true"></span><span class="bx-dot__core" aria-hidden="true"></span></button>
+                  <button class="bx-dot" type="button" aria-label="Page 3"><span class="bx-dot__ring" aria-hidden="true"></span><span class="bx-dot__core" aria-hidden="true"></span></button>
+                </div>
               </div>
-              <p class="bx-p3" style="margin-top:24px; opacity:0.6;">Synthetic / illustrative data &mdash; pattern matches BREIT / BCRED long-form disclosure tables.</p>
             </article>
 
             <article class="bx-variant" style="margin-top:64px;">
               <h4 class="bx-variant__heading">Office Detail Table</h4>
-              <p class="bx-p3" style="margin-top:8px; max-width:720px;">4-column contact table inside an expanded city accordion. Two rules only: top + bottom of the table. No row dividers.</p>
               <table class="bx-data-table">
                 <thead>
                   <tr><th>Address</th><th>Business</th><th>Phone</th><th>Fax</th></tr>
@@ -7448,7 +7908,7 @@
     // IntersectionObserver fires the two-part curtain + image-fade animation once the
     // wrapper is 20% visible. The animation is one-shot; the Replay button below the demo
     // resets it on demand.
-    var curtainEls = document.querySelectorAll(".bx-animation__image-wrapper");
+    var curtainEls = document.querySelectorAll(".bx-animation__image-wrapper, .bx-card__image");
     if (curtainEls.length && "IntersectionObserver" in window && !prefersReduced) {
       var curtainIO = new IntersectionObserver(function (entries) {
         entries.forEach(function (entry) {
