@@ -113,23 +113,24 @@
   body { font-family: var(--bx-f-sans); font-size: 16px; font-weight: 400; line-height: 24px; }
 
   /* Outer wrapper. Vertical padding gives the eyebrow breathing room from the
-     parent site nav above and lets the parent site footer settle below the
-     final tab content with matching rhythm. The Squarespace Code Block's own
-     ~17px is already neutralized by the embed snippet's padding overrides. */
-  .bx-shell { max-width: var(--bx-max); margin: 0 auto; padding: 96px var(--bx-pad-x) 96px; }
+     parent site nav above and a matching rhythm below the final content before
+     the parent site footer. Tightened from 96px → 64px so sparse sub-pages
+     don't read as mostly empty space. The Squarespace Code Block's own ~17px
+     is already neutralized by the embed snippet's padding overrides. */
+  .bx-shell { max-width: var(--bx-max); margin: 0 auto; padding: 64px var(--bx-pad-x) 64px; }
   @media (max-width: 768px) {
-    .bx-shell { padding: 48px var(--bx-pad-x) 48px; }
+    .bx-shell { padding: 32px var(--bx-pad-x) 32px; }
   }
 
   /* ---------- Theme toggle (label + dot, two options) ---------- */
   .bx-theme-toggle-wrap {
     position: absolute;
-    top: 96px;
+    top: 64px;
     right: var(--bx-pad-x);
     display: inline-flex; align-items: center; gap: 24px;
   }
   @media (max-width: 768px) {
-    .bx-theme-toggle-wrap { top: 48px; }
+    .bx-theme-toggle-wrap { top: 32px; }
   }
   .bx-theme-option {
     display: inline-flex; align-items: center; gap: 10px;
@@ -337,7 +338,7 @@
   .bx-tabs__btn:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; }
 
   /* ---------- Panels ---------- */
-  .bx-panel { padding-top: 32px; padding-bottom: var(--bx-gap-section); }
+  .bx-panel { padding-top: 32px; padding-bottom: 32px; }
   .bx-panel[hidden] { display: none; }
   .bx-panel__desc { margin-top: 16px; max-width: 720px; }
 
