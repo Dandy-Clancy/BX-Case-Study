@@ -314,7 +314,7 @@
   .bx-tabs__btn {
     appearance: none; border: 0; padding: 20px 0;
     font-family: var(--bx-f-sans);
-    font-size: 14px; font-weight: 400; line-height: 21px; letter-spacing: 0.96px;
+    font-size: 14px; font-weight: 500; line-height: 21px; letter-spacing: 0.96px;
     text-transform: uppercase;
     color: inherit; cursor: pointer; position: relative;
     background-image: linear-gradient(currentColor, currentColor);
@@ -331,7 +331,7 @@
     text-shadow: 0.4px 0 0 currentColor;
   }
   .bx-tabs__btn[aria-selected="true"] {
-    font-weight: 500;
+    font-weight: 600;
     background-size: 100% 1px;
   }
   .bx-tabs__btn:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; }
@@ -394,7 +394,7 @@
     appearance: none; background: transparent; border: 0; padding: 12px 0;
     display: inline-block; text-align: left;
     font-family: var(--bx-f-sans);
-    font-size: 14px; font-weight: 400; line-height: 21px; letter-spacing: 0.96px;
+    font-size: 14px; font-weight: 500; line-height: 21px; letter-spacing: 0.96px;
     color: inherit; cursor: pointer;
     text-transform: uppercase;
     position: relative;
@@ -418,7 +418,7 @@
   }
   .bx-subnav__btn:hover { opacity: 1; text-shadow: 0.4px 0 0 currentColor; }
   .bx-subnav__btn:hover::after { transform: scaleX(1); }
-  .bx-subnav__btn[aria-selected="true"] { opacity: 1; font-weight: 500; }
+  .bx-subnav__btn[aria-selected="true"] { opacity: 1; font-weight: 600; }
   .bx-subnav__btn[aria-selected="true"]::after { transform: scaleX(1); }
   .bx-subnav__btn:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; }
 
@@ -1577,11 +1577,11 @@
   .bx-mega-nav__search:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; }
   /* Override .bx-nav-link defaults inside the mega nav for accurate scale */
   .bx-mega-nav .bx-nav-link {
-    font-size: 18px; font-weight: 300; line-height: 27px; letter-spacing: 0.32px;
+    font-size: 18px; font-weight: 500; line-height: 27px; letter-spacing: 0.32px;
     padding: 0 0 6px 0;
     gap: 8px;
   }
-  .bx-mega-nav .bx-nav-link[aria-current="true"] { font-weight: 300; }
+  .bx-mega-nav .bx-nav-link[aria-current="true"] { font-weight: 600; }
   .bx-mega-nav .bx-nav-link svg { width: 18px; height: 18px; }
   .bx-mega-nav__panel {
     border-top: 1px solid var(--bx-rule);
@@ -2071,6 +2071,146 @@
     font-family: var(--bx-f-sans);
     font-size: 11px; letter-spacing: 0.4px; font-weight: 400;
     fill: currentColor; text-transform: none;
+  }
+
+  /* ---------- Side-by-Side Composition Pair ----------
+     Two charts paired in a single dark frame: composition donut on the left,
+     trend / comparison on the right. Each side carries its own title, palette
+     and callout. A single Note: line spans the full width below the pair. */
+  .bx-dv-pair {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 48px;
+    row-gap: 32px;
+    margin-top: 32px;
+    padding: 56px 48px;
+    background: #000000;
+    color: #ffffff;
+  }
+  .bx-dv-pair__col { margin: 0; min-width: 0; display: flex; flex-direction: column; gap: 24px; }
+  .bx-dv-pair__title {
+    font-family: var(--bx-f-sans);
+    font-size: 16px; font-weight: 600; line-height: 24px; letter-spacing: 0.32px;
+    color: inherit; margin: 0;
+  }
+  .bx-dv-pair__title sup { font-size: 11px; vertical-align: super; margin-left: 2px; font-weight: 400; }
+  .bx-dv-pair__donut {
+    position: relative;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    align-items: center;
+    min-height: 360px;
+  }
+  .bx-dv-pair__donut-svg { width: 100%; max-width: 280px; height: auto; margin: 0 auto; grid-row: 2; }
+  .bx-dv-pair__seg {
+    transition: opacity 0.18s ease, transform 0.18s ease;
+    transform-origin: center;
+  }
+  .bx-dv-pair__donut:hover .bx-dv-pair__seg { opacity: 0.4; }
+  .bx-dv-pair__donut .bx-dv-pair__seg:hover { opacity: 1; transform: scale(1.04); }
+  .bx-dv-pair__donut-label { display: flex; flex-direction: column; gap: 4px; margin: 0; }
+  .bx-dv-pair__donut-label--top { grid-row: 1; align-self: start; justify-self: start; }
+  .bx-dv-pair__donut-label--bottom { grid-row: 3; align-self: end; justify-self: end; text-align: right; }
+  .bx-dv-pair__pct {
+    font-family: var(--bx-f-serif);
+    font-size: 56px; font-weight: 300; line-height: 1; letter-spacing: 0.448px;
+  }
+  .bx-dv-pair__pct-cap {
+    font-family: var(--bx-f-sans);
+    font-size: 14px; font-weight: 400; line-height: 21px;
+  }
+  .bx-dv-pair__bars { position: relative; min-height: 360px; }
+  .bx-dv-pair__bars-svg { width: 100%; height: auto; }
+  .bx-dv-pair__save {
+    position: absolute;
+    top: 16px; left: 16px;
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(255, 255, 255, 0.08);
+    color: #ffffff;
+    border: 0;
+    padding: 8px 14px;
+    font-family: var(--bx-f-sans);
+    font-size: 12px; font-weight: 500; line-height: 18px; letter-spacing: 0.4px;
+    cursor: pointer;
+    transition: background 0.18s ease;
+  }
+  .bx-dv-pair__save:hover { background: rgba(255, 255, 255, 0.18); }
+  .bx-dv-pair__save svg { width: 14px; height: 14px; }
+  .bx-dv-pair__save:focus-visible { outline: 2px solid #ffffff; outline-offset: 4px; }
+  .bx-dv-pair__note {
+    grid-column: 1 / -1;
+    font-family: var(--bx-f-sans);
+    font-size: 12px; font-weight: 400; line-height: 18px;
+    color: inherit;
+    margin: 16px 0 0 0;
+    opacity: 0.9;
+  }
+  .bx-dv-pair__note-key { font-weight: 600; }
+  @media (max-width: 768px) {
+    .bx-dv-pair { grid-template-columns: 1fr; padding: 32px 20px; }
+    .bx-dv-pair__pct { font-size: 40px; }
+    .bx-dv-pair__donut { min-height: 280px; }
+  }
+
+  /* ---------- Line Chart — Hero End-Labels (upgraded) ----------
+     Two solid series + top-left legend + hero Sanomat values pinned to the
+     right edge at each line's terminal point. Pairs the trend with two large
+     takeaway figures the eye lands on first. */
+  .bx-dv-linehero { width: 100%; }
+  .bx-dv-linehero__legend {
+    display: inline-flex;
+    align-items: center;
+    gap: 32px;
+    margin: 0 0 16px 0;
+    padding: 0;
+    list-style: none;
+    flex-wrap: wrap;
+  }
+  .bx-dv-linehero__legend-row {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    font-family: var(--bx-f-sans);
+    font-size: 14px; font-weight: 500; line-height: 21px; letter-spacing: 0.32px;
+    color: inherit;
+  }
+  .bx-dv-linehero__legend-swatch {
+    display: inline-block;
+    width: 28px; height: 3px;
+    background: currentColor;
+  }
+  .bx-dv-linehero__legend-swatch--mute { opacity: 0.45; }
+  .bx-dv-linehero__chart {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: stretch;
+    gap: 24px;
+  }
+  .bx-dv-linehero__svg { width: 100%; height: auto; }
+  .bx-dv-linehero__hero {
+    display: flex; flex-direction: column;
+    justify-content: space-between;
+    padding: 48px 0 56px 0;
+    min-width: 140px;
+  }
+  .bx-dv-linehero__hero-row {
+    display: flex; flex-direction: column; gap: 4px;
+    text-align: left;
+  }
+  .bx-dv-linehero__hero-label {
+    font-family: var(--bx-f-sans);
+    font-size: 14px; font-weight: 500; line-height: 21px; letter-spacing: 0.32px;
+    color: inherit; margin: 0;
+  }
+  .bx-dv-linehero__hero-value {
+    font-family: var(--bx-f-serif);
+    font-size: 64px; font-weight: 300; line-height: 1; letter-spacing: 0.512px;
+    color: inherit; margin: 0;
+  }
+  @media (max-width: 768px) {
+    .bx-dv-linehero__chart { grid-template-columns: 1fr; }
+    .bx-dv-linehero__hero { padding: 0; flex-direction: row; gap: 32px; }
+    .bx-dv-linehero__hero-value { font-size: 40px; }
   }
 
   /* KPI / Stat Block — large Sanomat figure + caption + delta */
@@ -3283,7 +3423,7 @@
     display: inline-flex; align-items: center; gap: 8px;
     background: transparent; border: 0; padding: 0 0 4px 0;
     font-family: var(--bx-f-sans);
-    font-size: 16px; font-weight: 400; line-height: 24px; letter-spacing: 0.32px;
+    font-size: 16px; font-weight: 500; line-height: 24px; letter-spacing: 0.32px;
     color: inherit;
     cursor: pointer;
     text-decoration: none;
@@ -5655,51 +5795,80 @@
         </div>
       </article>
 
-      <!-- ====== LINE CHART ====== -->
+      <!-- ====== LINE CHART (with hero end-labels + top legend) ====== -->
       <article class="bx-variant" aria-labelledby="dv-line">
         <h4 class="bx-variant__heading" id="dv-line">Line Chart</h4>
-        <p class="bx-p3" style="margin-top:8px; max-width:720px;">Trend over a continuous interval &mdash; usually time. Two-series form lets one track against a benchmark; the muted line is the comparator.</p>
+        <p class="bx-p3" style="margin-top:8px; max-width:720px;">Two-series trend with a top-left legend and hero Sanomat values pinned to the right edge at each line's terminal point. The takeaway figures sit larger than anything else on the page so the eye lands there first; the lines are the supporting evidence.</p>
         <div class="bx-spec-strip" style="margin-top:24px;">
-          <div class="bx-spec-strip__cell"><span class="bx-spec-strip__key">USE WHEN</span><span class="bx-spec-strip__val">Showing a value moving across time</span></div>
-          <div class="bx-spec-strip__cell"><span class="bx-spec-strip__key">AVOID WHEN</span><span class="bx-spec-strip__val">Categories are unordered or sample is &lt;4 points</span></div>
-          <div class="bx-spec-strip__cell"><span class="bx-spec-strip__key">PRIMARY LINE</span><span class="bx-spec-strip__val">1.5px solid currentColor</span></div>
-          <div class="bx-spec-strip__cell"><span class="bx-spec-strip__key">BENCHMARK</span><span class="bx-spec-strip__val">1px dashed currentColor at 0.4 opacity</span></div>
+          <div class="bx-spec-strip__cell"><span class="bx-spec-strip__key">USE WHEN</span><span class="bx-spec-strip__val">A long-horizon two-series trend has a clear winner</span></div>
+          <div class="bx-spec-strip__cell"><span class="bx-spec-strip__key">AVOID WHEN</span><span class="bx-spec-strip__val">Either series alone tells the story &mdash; use a single line</span></div>
+          <div class="bx-spec-strip__cell"><span class="bx-spec-strip__key">LEGEND</span><span class="bx-spec-strip__val">Top-left, 28&times;3px swatches + sans 14/21 labels</span></div>
+          <div class="bx-spec-strip__cell"><span class="bx-spec-strip__key">END-LABEL</span><span class="bx-spec-strip__val">Sanomat 64/64, currentColor, pinned at terminal y</span></div>
         </div>
-        <div class="bx-dv">
-          <svg class="bx-dv__chart" viewBox="0 0 720 320" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Line chart showing primary series and dashed benchmark across twelve months">
-            <line class="bx-dv-grid" x1="60" y1="60"  x2="700" y2="60"/>
-            <line class="bx-dv-grid" x1="60" y1="130" x2="700" y2="130"/>
-            <line class="bx-dv-grid" x1="60" y1="200" x2="700" y2="200"/>
-            <line class="bx-dv-grid" x1="60" y1="270" x2="700" y2="270"/>
-            <line class="bx-dv-axis" x1="60" y1="270" x2="700" y2="270"/>
-            <text x="50" y="64"  text-anchor="end">+30%</text>
-            <text x="50" y="134" text-anchor="end">+15%</text>
-            <text x="50" y="204" text-anchor="end">0%</text>
-            <text x="50" y="274" text-anchor="end">&minus;15%</text>
-            <!-- benchmark (muted, dashed) -->
-            <path class="bx-dv-line--muted" d="M70 220 L130 215 L190 210 L250 200 L310 195 L370 190 L430 185 L490 180 L550 175 L610 170 L660 165"/>
-            <!-- primary line -->
-            <path class="bx-dv-line" d="M70 240 L130 220 L190 200 L250 180 L310 160 L370 130 L430 145 L490 110 L550 90 L610 80 L660 70"/>
-            <!-- dots on primary -->
-            <circle class="bx-dv-dot" cx="70"  cy="240" r="4"/>
-            <circle class="bx-dv-dot" cx="370" cy="130" r="4"/>
-            <circle class="bx-dv-dot" cx="660" cy="70"  r="4"/>
-            <!-- x labels -->
-            <text x="70"  y="294" text-anchor="middle">JAN</text>
-            <text x="190" y="294" text-anchor="middle">MAR</text>
-            <text x="310" y="294" text-anchor="middle">MAY</text>
-            <text x="430" y="294" text-anchor="middle">JUL</text>
-            <text x="550" y="294" text-anchor="middle">SEP</text>
-            <text x="660" y="294" text-anchor="middle">NOV</text>
-          </svg>
-          <div class="bx-dv__caption">
-            <div class="bx-dv__caption-item">
-              <p class="bx-dv__caption-label">Primary Series (solid)</p>
-              <p class="bx-dv__caption-value">Synthetic series A &mdash; cumulative monthly change</p>
-            </div>
-            <div class="bx-dv__caption-item">
-              <p class="bx-dv__caption-label">Benchmark (dashed)</p>
-              <p class="bx-dv__caption-value">Synthetic baseline &mdash; flat reference line</p>
+        <div class="bx-dv-linehero">
+          <p class="bx-p3" style="margin:24px 0 4px 0; font-weight:600;">Section title with a longer descriptor</p>
+          <p class="bx-p3" style="margin:0 0 16px 0;">Caption sub-line</p>
+          <ul class="bx-dv-linehero__legend" role="list">
+            <li class="bx-dv-linehero__legend-row" style="color:var(--bx-dv-c1);">
+              <span class="bx-dv-linehero__legend-swatch"></span>
+              <span style="color:var(--bx-fg);">Series Primary</span>
+            </li>
+            <li class="bx-dv-linehero__legend-row" style="color:var(--bx-dv-mute);">
+              <span class="bx-dv-linehero__legend-swatch"></span>
+              <span style="color:var(--bx-fg);">Series Comparator</span>
+            </li>
+          </ul>
+          <div class="bx-dv-linehero__chart">
+            <svg class="bx-dv-linehero__svg bx-dv__chart" viewBox="0 0 720 360" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Two-series growth line chart over 18 years; primary ends at $796k, comparator ends at $386k">
+              <!-- horizontal grid lines: $0 / $100k / $200k ... $900k (10 lines, top at y=20, bottom at y=320) -->
+              <line class="bx-dv-grid" x1="80" y1="20"  x2="700" y2="20"/>
+              <line class="bx-dv-grid" x1="80" y1="53"  x2="700" y2="53"/>
+              <line class="bx-dv-grid" x1="80" y1="86"  x2="700" y2="86"/>
+              <line class="bx-dv-grid" x1="80" y1="120" x2="700" y2="120"/>
+              <line class="bx-dv-grid" x1="80" y1="153" x2="700" y2="153"/>
+              <line class="bx-dv-grid" x1="80" y1="186" x2="700" y2="186"/>
+              <line class="bx-dv-grid" x1="80" y1="220" x2="700" y2="220"/>
+              <line class="bx-dv-grid" x1="80" y1="253" x2="700" y2="253"/>
+              <line class="bx-dv-grid" x1="80" y1="286" x2="700" y2="286"/>
+              <line class="bx-dv-axis" x1="80" y1="320" x2="700" y2="320"/>
+              <!-- y labels -->
+              <text x="72" y="24"  text-anchor="end">$900,000</text>
+              <text x="72" y="57"  text-anchor="end">$800,000</text>
+              <text x="72" y="90"  text-anchor="end">$700,000</text>
+              <text x="72" y="124" text-anchor="end">$600,000</text>
+              <text x="72" y="157" text-anchor="end">$500,000</text>
+              <text x="72" y="190" text-anchor="end">$400,000</text>
+              <text x="72" y="224" text-anchor="end">$300,000</text>
+              <text x="72" y="257" text-anchor="end">$200,000</text>
+              <text x="72" y="290" text-anchor="end">$100,000</text>
+              <text x="72" y="324" text-anchor="end">$0</text>
+              <!-- comparator line ($100k → $386k over 18 years), light gray -->
+              <path d="M90 290 L122 296 L156 304 L188 300 L220 286 L254 272 L286 256 L320 240 L352 226 L386 212 L420 196 L454 192 L488 184 L522 198 L556 178 L590 160 L624 174 L658 152 L690 130"
+                    fill="none" stroke="var(--bx-dv-mute)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <!-- primary line ($100k → $796k over 18 years), teal — sharper acceleration around year 13-15 -->
+              <path d="M90 290 L122 286 L156 296 L188 282 L220 264 L254 244 L286 220 L320 198 L352 178 L386 160 L420 138 L454 130 L488 122 L522 96  L556 70  L590 86  L624 76  L658 60  L690 58"
+                    fill="none" stroke="var(--bx-dv-c1)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+              <!-- x labels (every 2 years) -->
+              <text x="90"  y="344" text-anchor="middle">'07</text>
+              <text x="156" y="344" text-anchor="middle">'09</text>
+              <text x="220" y="344" text-anchor="middle">'11</text>
+              <text x="286" y="344" text-anchor="middle">'13</text>
+              <text x="352" y="344" text-anchor="middle">'15</text>
+              <text x="420" y="344" text-anchor="middle">'17</text>
+              <text x="488" y="344" text-anchor="middle">'19</text>
+              <text x="556" y="344" text-anchor="middle">'21</text>
+              <text x="624" y="344" text-anchor="middle">'23</text>
+              <text x="690" y="344" text-anchor="middle">'25</text>
+            </svg>
+            <div class="bx-dv-linehero__hero" aria-hidden="true">
+              <div class="bx-dv-linehero__hero-row">
+                <p class="bx-dv-linehero__hero-label">Series Primary</p>
+                <p class="bx-dv-linehero__hero-value">$796k</p>
+              </div>
+              <div class="bx-dv-linehero__hero-row">
+                <p class="bx-dv-linehero__hero-label">Series Comparator</p>
+                <p class="bx-dv-linehero__hero-value">$386k</p>
+              </div>
             </div>
           </div>
         </div>
@@ -5815,6 +5984,76 @@
               <text x="0" y="34" text-anchor="middle" dominant-baseline="middle" style="font-family:var(--bx-f-sans); font-size:11px; font-weight:400; letter-spacing:0.4px;" fill="currentColor">Hero stat caption</text>
             </g>
           </svg>
+        </div>
+      </article>
+
+      <!-- ====== SIDE-BY-SIDE COMPOSITION (DONUT + 2-BAR ON DARK FRAME) ====== -->
+      <article class="bx-variant" aria-labelledby="dv-side-pair">
+        <h4 class="bx-variant__heading" id="dv-side-pair">Side-by-Side Composition</h4>
+        <p class="bx-p3" style="margin-top:8px; max-width:720px;">Two related charts paired in a single dark-frame visual unit. Composition donut on the left carries the proportional story plus a hero center figure; trend bars on the right carry the magnitude shift. Each side has its own title and footnote ref. A legal-style Note: spans the full width below.</p>
+        <div class="bx-spec-strip" style="margin-top:24px;">
+          <div class="bx-spec-strip__cell"><span class="bx-spec-strip__key">USE WHEN</span><span class="bx-spec-strip__val">Two charts together tell a story neither does alone</span></div>
+          <div class="bx-spec-strip__cell"><span class="bx-spec-strip__key">AVOID WHEN</span><span class="bx-spec-strip__val">Either chart can stand alone &mdash; don't pair for decoration</span></div>
+          <div class="bx-spec-strip__cell"><span class="bx-spec-strip__key">FRAME</span><span class="bx-spec-strip__val">Solid #000 backdrop, 56px vertical / 48px horizontal padding</span></div>
+          <div class="bx-spec-strip__cell"><span class="bx-spec-strip__key">PALETTE</span><span class="bx-spec-strip__val">Navy (var(--bx-dv-c3)) + light-gray comparator</span></div>
+        </div>
+        <div class="bx-dv-pair">
+          <!-- LEFT: Donut + center value, with %s in the corners -->
+          <figure class="bx-dv-pair__col">
+            <p class="bx-dv-pair__title">Section title with footnote<sup>[1]</sup></p>
+            <div class="bx-dv-pair__donut" data-bx-pair-donut>
+              <p class="bx-dv-pair__donut-label bx-dv-pair__donut-label--top">
+                <span class="bx-dv-pair__pct">86%</span>
+                <span class="bx-dv-pair__pct-cap">Segment Primary</span>
+              </p>
+              <svg class="bx-dv-pair__donut-svg" viewBox="0 0 320 320" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Donut: 86 percent primary segment, 14 percent secondary; center figure 250 million plus in corporate revenue">
+                <g transform="translate(160 160)">
+                  <!-- 86% navy from 0 → 309.6deg -->
+                  <path class="bx-dv-pair__seg" data-key="primary" fill="var(--bx-dv-c3)" d="M0 -130 A130 130 0 1 1 -100.86 81.86 L-85.36 69.30 A110 110 0 1 0 0 -110 Z"/>
+                  <!-- 14% light gray from 309.6 → 360deg -->
+                  <path class="bx-dv-pair__seg" data-key="secondary" fill="var(--bx-dv-mute)" d="M-100.86 81.86 A130 130 0 0 1 0 -130 L0 -110 A110 110 0 0 0 -85.36 69.30 Z"/>
+                  <!-- Hero center figure -->
+                  <text x="0" y="-2" text-anchor="middle" dominant-baseline="middle" style="font-family:var(--bx-f-serif); font-size:42px; font-weight:300; letter-spacing:0.336px;" fill="#ffffff">$250M+</text>
+                  <text x="0" y="26" text-anchor="middle" dominant-baseline="middle" style="font-family:var(--bx-f-sans); font-size:13px; font-weight:400;" fill="#ffffff">in supporting context</text>
+                </g>
+              </svg>
+              <p class="bx-dv-pair__donut-label bx-dv-pair__donut-label--bottom">
+                <span class="bx-dv-pair__pct">14%</span>
+                <span class="bx-dv-pair__pct-cap">Segment Secondary</span>
+              </p>
+            </div>
+          </figure>
+          <!-- RIGHT: Two-bar comparison with delta arrow + "Save" affordance -->
+          <figure class="bx-dv-pair__col">
+            <p class="bx-dv-pair__title">Right-side title with footnote<sup>[7]</sup></p>
+            <div class="bx-dv-pair__bars">
+              <button class="bx-dv-pair__save" type="button" aria-label="Save chart to collection">
+                <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M3 2h10v12l-5-3-5 3z" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>
+                <span>Save</span>
+              </button>
+              <svg class="bx-dv-pair__bars-svg" viewBox="0 0 360 360" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Two-bar comparison: ~8,000 in 1996 vs ~4,000 in 2024; ~50 percent decline">
+                <defs>
+                  <marker id="bx-dv-pair-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse" markerUnits="userSpaceOnUse">
+                    <path d="M0,0 L10,5 L0,10" fill="none" stroke="#ffffff" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </marker>
+                </defs>
+                <line x1="40" y1="320" x2="320" y2="320" stroke="#ffffff" stroke-width="1"/>
+                <!-- left bar (navy, full height) -->
+                <rect x="80"  y="60"  width="100" height="260" fill="var(--bx-dv-c3)"/>
+                <text x="130" y="46" text-anchor="middle" style="font-family:var(--bx-f-sans); font-size:14px; font-weight:400;" fill="#ffffff">~8,000</text>
+                <text x="130" y="346" text-anchor="middle" style="font-family:var(--bx-f-sans); font-size:12px; letter-spacing:0.4px;" fill="#ffffff">1996</text>
+                <!-- right bar (light gray, half) -->
+                <rect x="220" y="190" width="100" height="130" fill="var(--bx-dv-mute)"/>
+                <text x="270" y="178" text-anchor="middle" style="font-family:var(--bx-f-sans); font-size:14px; font-weight:400;" fill="#ffffff">~4,000</text>
+                <text x="270" y="346" text-anchor="middle" style="font-family:var(--bx-f-sans); font-size:12px; letter-spacing:0.4px;" fill="#ffffff">2024</text>
+                <!-- diagonal annotation arrow from top of bar 1 to top of bar 2 -->
+                <line x1="180" y1="68" x2="218" y2="186" stroke="#ffffff" stroke-width="1" marker-end="url(#bx-dv-pair-arrow)"/>
+                <!-- delta callout -->
+                <text x="210" y="148" text-anchor="middle" style="font-family:var(--bx-f-serif); font-size:34px; font-weight:300;" fill="#ffffff">~50%</text>
+              </svg>
+            </div>
+          </figure>
+          <p class="bx-dv-pair__note"><span class="bx-dv-pair__note-key">Note:</span> Synthetic / illustrative copy &mdash; pattern matches the BX paired-chart layout. The disclaimer line uses sans 12/18 at currentColor and runs the full width of the figure pair below both columns.</p>
         </div>
       </article>
 
