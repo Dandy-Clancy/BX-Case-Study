@@ -7123,6 +7123,40 @@
     bindTabs(".bx-tabs__btn", ".bx-panel");
     bindTabs(".bx-subnav__btn", ".bx-sub-panel");
 
+    // ---------- Embed-friendly height broadcast ----------
+    // When the artifact is loaded inside an iframe (e.g. on a Squarespace page),
+    // it posts its current content height to the parent window so the parent
+    // can resize the iframe to match. Fires on load, on tab/sub-tab change, on
+    // resize, and on any DOM mutation that changes content height.
+    (function () {
+      if (window.parent === window) return; // not embedded
+      var lastHeight = 0;
+      function postHeight() {
+        var h = document.documentElement.scrollHeight;
+        if (h === lastHeight) return;
+        lastHeight = h;
+        try {
+          window.parent.postMessage({ type: "bx-cs-height", height: h }, "*");
+        } catch (e) { /* swallow cross-origin failures */ }
+      }
+      window.addEventListener("load", postHeight);
+      window.addEventListener("resize", postHeight);
+      // After every tab/sub-nav click, content swaps — re-post height
+      document.addEventListener("click", function (e) {
+        if (e.target.closest(".bx-tabs__btn, .bx-subnav__btn, .bx-doc-accordion summary, .bx-accordion__row, .bx-dropdown__trigger, .bx-dv-pilltabs__btn")) {
+          setTimeout(postHeight, 50);
+          setTimeout(postHeight, 350);
+        }
+      });
+      // Catch any other mutations (carousel slides, lightbox open/close, etc.)
+      var mo = new MutationObserver(function () { postHeight(); });
+      mo.observe(document.body, { attributes: true, childList: true, subtree: true });
+      // Initial fallback ping
+      setTimeout(postHeight, 100);
+      setTimeout(postHeight, 500);
+      setTimeout(postHeight, 1500);
+    })();
+
     // Pagination dots — click moves aria-current
     document.querySelectorAll(".bx-dots").forEach(function (group) {
       var dots = group.querySelectorAll(".bx-dot");
